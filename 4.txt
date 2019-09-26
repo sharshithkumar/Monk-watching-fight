@@ -1,72 +1,69 @@
 #include<iostream>
 using namespace std;
 
-struct node
+struct Node
 {
-	int data;
-	node* left;
-	node* right;
+    int data;
+    struct Node* left;
+    struct Node* right;
 };
 
-struct node* getNode(int data)
+struct Node* create(int data)
 {
-	node* newNode=new node();
-	newNode->data=data;
-	newNode->left=NULL;
-	newNode->right=NULL;
-	return newNode;
+    struct Node* temp=(struct Node*)malloc(sizeof(struct Node));
+    temp->data=data;
+    temp->left=temp->right=NULL;
+    return temp;
 }
 
-void inorder(struct node* root)
+void insert(struct Node*root,int data)
 {
-	if (root != NULL)
-	{
-		inorder(root->left);
-		cout<<root->data<<" ";
-		inorder(root->right);
-	}
+    
+    if(data>root->data)
+    {
+        if(root->right==NULL)
+        root->right=create(data);
+        else
+        insert(root->right,data);
+    }
+    else
+    {
+        if(root->left==NULL)
+        root->left=create(data);
+        else
+        insert(root->left,data);
+    }
 }
 
-struct node* Insert(struct node* root, int data)
+int height(struct Node* root,int count)
 {
-	if (root == NULL)
-		return getNode(data);
-
-	if (data < root->data)
-		root->left  = Insert(root->left, data);
-	else if (data > root->data)
-		root->right = Insert(root->right, data);
-
-	return root;
+    if(root!=NULL)
+    {
+        count++;
+        int h1=height(root->left,count);
+        int h2=height(root->right,count);
+        if(h2>h1)
+        return h2;
+        return h1;
+    }
+        return count;
 }
 
-int FindHeight(node* root)
-{
-	if(root==NULL)
-		return 0;
 
-	else
-	{
-		int lb=FindHeight(root->left);
-		int rb=FindHeight(root->right);
-		return max(lb,rb)+1;
-	}
-}
 int main()
 {
-	node* root=NULL;
-	root=Insert(root,7);
-	Insert(root,9);
-	Insert(root,4);
-	Insert(root,1);
-	Insert(root,5);
-
-	cout<<"Inorder: ";
-	inorder(root);
-	cout<<endl;
-
-	cout<<"Height of the tree is "<<FindHeight(root)<<endl;
-	cout<<"Max. Depth of the tree is "<<FindHeight(root)-1;
-	
-	return 0;
+    int n,data;
+    cin>>n;
+    cin>>data;
+    struct Node * root=create(data);
+    
+    for(int i=0;i<n-1;i++)
+    {
+        cin>>data;
+        insert(root,data);
+    }
+    cout<<height(root,0);
+    
+    
+    return 0;
 }
